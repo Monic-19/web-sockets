@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -10,6 +10,26 @@ import { IconButton } from '@mui/material';
 import ConversationBox from './ConversationBox';
 
 const Sidebar = () => {
+
+    const [conversations, setConversations] = useState([
+        {
+            name : "Monic",
+            lastMessage : "Subh uth jana",
+            timeStamp : "today",
+        },
+        {
+            name : "Bansal",
+            lastMessage : "BKL",
+            timeStamp : "today",
+        },
+        {
+            name : "Trauma",
+            lastMessage : "Gonna Cry Today",
+            timeStamp : "yesterday",
+        },
+    ])
+
+
   return (
     <div className=' h-full w-[30%] bg-[#F3F3F4] '>
         <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row lg:justify-between lg:m-[2%] lg:p-3 lg:mt-[12px]'>
@@ -37,8 +57,11 @@ const Sidebar = () => {
 
         <div className='bg-white rounded-md mt-[10%] m-[6%] p-3 overflow-y-scroll scroll-smooth lg:mt-[4%] lg:m-[2%]'>
             <h3 className='m-[2%] text-md lg:text-lg'>Chats..</h3>
-            <ConversationBox></ConversationBox>
-            <ConversationBox></ConversationBox>
+            {
+                conversations.map(  (convo, index) => (
+                    <ConversationBox key={index} convo={convo}></ConversationBox>
+                ))
+            }
         </div>
     </div>
   )
