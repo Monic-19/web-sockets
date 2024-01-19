@@ -5,3 +5,9 @@
 ::-webkit-scrollbar{
     display: none;
 }
+
+
+.icons{
+    width: 1.15em !important;
+    height: 1.15em !important;
+}
