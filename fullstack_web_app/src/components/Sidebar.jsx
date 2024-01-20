@@ -32,12 +32,12 @@ const Sidebar = () => {
     const navigate = useNavigate(); 
 
   return (
-    <div className={'h-full w-[30%] bg-[#F3F3F4]'}>
+    <div className={'h-full w-[30%] bg-[#F3F3F4] z-20'}>
 
         <div className={ ' mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row lg:justify-between lg:m-[2%] lg:p-3 lg:mt-[12px] shadow-md'}>
 
             <div className="left">
-                <IconButton>
+                <IconButton onClick={ () => {navigate('profile')}}>
                 <AccountCircleIcon className={ 'icons'}></AccountCircleIcon>
                 </IconButton>
             </div>

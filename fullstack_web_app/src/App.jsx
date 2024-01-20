@@ -7,6 +7,8 @@ import ChatPart from './components/ChatPart';
 import UserAndGroups from './components/Users';
 import CreateGroups from './components/CreateGroups';
 import Groups from './components/Groups';
+import PageNotFound from './components/PageNotFound';
+import UserProfile from './components/UserProfile';
 
 function App() {
 
@@ -15,8 +17,10 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Login/>}></Route>
+        <Route path='*' element={<PageNotFound/>}></Route>
 
         <Route path='app' element={<MainContainer/>}>
+          <Route path='profile' element={<UserProfile/>}></Route>
           <Route path='welcome' element={<WelcomePage/>}></Route>
           <Route path='chat' element={<ChatPart/>}></Route>
           <Route path='users' element={<UserAndGroups/>}></Route>
