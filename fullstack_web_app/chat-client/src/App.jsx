@@ -9,6 +9,7 @@ import CreateGroups from './components/CreateGroups';
 import Groups from './components/Groups';
 import PageNotFound from './components/PageNotFound';
 import UserProfile from './components/UserProfile';
+import Signup from './components/Signup';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Login/>}></Route>
+        <Route path='/signup' element={<Signup/>}></Route>
         <Route path='*' element={<PageNotFound/>}></Route>
 
         <Route path='app' element={<MainContainer/>}>

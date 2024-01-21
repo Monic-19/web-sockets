@@ -13,6 +13,7 @@ const Users = () => {
                 exit={{ opacity: 0, scale: 0, borderRadius: "60%"}}
                 transition={{ ease: "anticipate", duration: "0.3" }}
                 className='h-full w-[70%] bg-[#F3F3F4]'>
+                    
                 <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row  lg:m-[2%] lg:p-3 lg:mt-[12px] shadow-md'>
 
                     <div className="left m-2 lg:m-0 h-[7vh] w-[7vh] lg:h-[5vh] lg:w-[5vh] bg-cover bg-no-repeat bg-[url('/assets/logo.jpeg')]">
