@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
@@ -6,6 +6,9 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 const Login = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
+
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
 
     const formani = {
         initial: { rotate: "-40deg", opacity: 0 },
@@ -18,6 +21,33 @@ const Login = () => {
         animate: { scale: 1, opacity: 1 },
         transition: { duration: 0.5, ease: "easeInOut" },
     };
+
+    const handleLogin = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/user/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, password }),
+          });
+      
+          if (!response.ok) {
+            throw new Error('Login failed');
+          }
+      
+          const resData = await response.json();
+          console.log("res token ", resData.token);
+      
+          localStorage.setItem("token", resData.token);
+          navigate("/app/welcome");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+      
+
+
     return (
 
         <AnimatePresence>
@@ -51,50 +81,54 @@ const Login = () => {
                                     Create free account.
                                 </a>
                             </motion.p>
-                            <form action="#" method="POST" className="mt-8">
-                                <div className="space-y-5">
-                                    <div>
-                                        <label htmlFor="name" className="text-base font-medium text-gray-900">
-                                            {' '}
-                                            Username{' '}
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                                type="text"
-                                                placeholder="Username"
-                                                id="name"
-                                            ></input>
-                                        </div>
-                                    </div>
-                                 
-                                    <div>
-                                        <div className="flex items-center justify-between">
-                                            <label htmlFor="password" className="text-base font-medium text-gray-900">
-                                                {' '}
-                                                Password{' '}
-                                            </label>
-                                        </div>
-                                        <div className="mt-2">
-                                            <input
-                                                className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                                type="password"
-                                                placeholder="Password"
-                                                id="password"
-                                            ></input>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button
-                                            type="button"
-                                            className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 z-30"
-                                        >
-                                            Get Started <ArrowRightAltIcon className="ml-2" size={16} />
-                                        </button>
+
+                            <div className="space-y-5">
+                                <div>
+                                    <label htmlFor="name" className="text-base font-medium text-gray-900">
+                                        {' '}
+                                        Username{' '}
+                                    </label>
+                                    <div className="mt-2">
+                                        <input
+                                            name='name'
+                                            onChange={(e) => setName(e.target.value)}
+                                            className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                            type="text"
+                                            placeholder="Username"
+                                            id="name"
+                                        ></input>
                                     </div>
                                 </div>
-                            </form>
-                         
+
+                                <div>
+                                    <div className="flex items-center justify-between">
+                                        <label htmlFor="password" className="text-base font-medium text-gray-900">
+                                            {' '}
+                                            Password{' '}
+                                        </label>
+                                    </div>
+                                    <div className="mt-2">
+                                        <input
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            name='password'
+                                            className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                            type="password"
+                                            placeholder="Password"
+                                            id="password"
+                                        ></input>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={handleLogin}
+                                        type="button"
+                                        className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 z-30"
+                                    >
+                                        Get Started <ArrowRightAltIcon className="ml-2" size={16} />
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                     </motion.div>
                 </section>

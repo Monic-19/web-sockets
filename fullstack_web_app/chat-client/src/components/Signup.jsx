@@ -1,13 +1,45 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import EmailIcon from '@mui/icons-material/Email';
 import GoogleIcon from '@mui/icons-material/Google';
 
+
+
 const Signup = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
+
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSignup = async () => {
+        try {
+          const response = await fetch('http://localhost:3000/user/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, password }),
+          });
+      
+          if (!response.ok) {
+            throw new Error('Signup failed');
+          }
+      
+          const resData = await response.json();
+          console.log("RES_DATA: ", resData);
+      
+          localStorage.setItem("token", resData.token);
+          navigate("/app/welcome");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+      
 
     const formani = {
         initial: { rotate: "-40deg", opacity: 0 },
@@ -25,8 +57,6 @@ const Signup = () => {
         dragConstraints: constraintsRef,
         dragTransition: { bounceStiffness: 600, bounceDamping: 20 },
     }
-
-
 
     return (
         <motion.div ref={constraintsRef} className='h-[96vh] w-[92vw] lg:h-[92vh] lg:w-[95vw] flex flex-col lg:flex-row bg-[#F6FBFC] rounded-lg shadow-2xl'>
@@ -46,11 +76,11 @@ const Signup = () => {
                 <motion.div  {...entani} className="flex items-center justify-center  px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
 
                     <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
-               
-                        <motion.h2 {...formani}  className="text-2xl font-bold origin-left leading-tight text-black">Sign up to create account</motion.h2>
-                        <motion.p {...formani}  className="mt-2 text-base origin-left text-gray-600">
+
+                        <motion.h2 {...formani} className="text-2xl font-bold origin-left leading-tight text-black">Sign up to create account</motion.h2>
+                        <motion.p {...formani} className="mt-2 text-base origin-left text-gray-600">
                             Already have an account?{' '}
-                            <a onClick={() => {navigate("/")}}
+                            <a onClick={() => { navigate("/") }}
                                 href="#"
                                 title=""
                                 className="font-medium text-black transition-all duration-200 hover:underline"
@@ -58,69 +88,76 @@ const Signup = () => {
                                 Login In
                             </a>
                         </motion.p>
-                        <form action="#" method="POST" className="mt-8">
-                            <div className="space-y-5">
-                                <div>
-                                    <label htmlFor="name" className="text-base font-medium text-gray-900">
-                                        {' '}
-                                        Username{' '}
-                                    </label>
-                                    <div className="mt-2">
-                                        <input
-                                            className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                            type="text"
-                                            placeholder="Username"
-                                            id="name"
-                                        ></input>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="email" className="text-base font-medium text-gray-900">
-                                        {' '}
-                                        Email address{' '}
-                                    </label>
-                                    <div className="mt-2">
-                                        <input
-                                            className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                            type="email"
-                                            placeholder="Email"
-                                            id="email"
-                                        ></input>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="flex items-center justify-between">
-                                        <label htmlFor="password" className="text-base font-medium text-gray-900">
-                                            {' '}
-                                            Password{' '}
-                                        </label>
-                                    </div>
-                                    <div className="mt-2">
-                                        <input
-                                            className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                            type="password"
-                                            placeholder="Password"
-                                            id="password"
-                                        ></input>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button
-                                        type="button"
-                                        className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 z-30"
-                                    >
-                                        Create Account <ArrowRightAltIcon className="ml-2" size={16} />
-                                    </button>
+                        <div className="space-y-5">
+                            <div>
+                                <label htmlFor="name" className="text-base font-medium text-gray-900">
+                                    {' '}
+                                    Username{' '}
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="text"
+                                        placeholder="Username"
+                                        id="name"
+                                        name='name'
+                                    ></input>
                                 </div>
                             </div>
-                        </form>
+                            <div>
+                                <label htmlFor="email" className="text-base font-medium text-gray-900">
+                                    {' '}
+                                    Email address{' '}
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="email"
+                                        placeholder="Email"
+                                        id="email"
+                                        name='email'
+                                    ></input>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    className="flex items-center justify-between">
+                                    <label htmlFor="password" className="text-base font-medium text-gray-900">
+                                        {' '}
+                                        Password{' '}
+                                    </label>
+                                </div>
+                                <div className="mt-2">
+                                    <input
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="password"
+                                        placeholder="Password"
+                                        id="password"
+                                        name='password'
+                                    ></input>
+                                </div>
+                            </div>
+                            <div>
+                                <button
+                                    onClick={handleSignup}
+                                    type="button"
+                                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 z-30"
+                                >
+                                    Create Account <ArrowRightAltIcon className="ml-2" size={16} />
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="mt-3 space-y-3">
                             <button
-                                type="button"
+                                type="submit"
                                 className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
                             >
                                 <span className="mr-2 inline-block">
-                                  <GoogleIcon></GoogleIcon>
+                                    <GoogleIcon></GoogleIcon>
                                 </span>
                                 Sign up with Google
                             </button>
@@ -129,7 +166,7 @@ const Signup = () => {
                                 className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
                             >
                                 <span className="mr-2 inline-block">
-                                   <EmailIcon></EmailIcon>
+                                    <EmailIcon></EmailIcon>
                                 </span>
                                 Sign up with Email
                             </button>

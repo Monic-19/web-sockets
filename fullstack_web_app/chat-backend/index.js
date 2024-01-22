@@ -1,10 +1,19 @@
 const express = require("express")
 const app = express();
-app.use(express.json());
 const dotenv = require("dotenv")
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 dotenv.config();
+
+var corsOptions = {
+    origin : "http://localhost:5173",
+    methods : "GET, POST, DELETE",
+    credentials : true
+}
+app.use(cors(corsOptions))
+app.use(express.json());
+
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URL = process.env.MONGO_URL;
