@@ -5,6 +5,7 @@ const eah = require('express-async-handler');
 
 const UserModel = require("../models/userSchema");
 const generateToken = require("../config/generateToken");
+const authMiddleware = require("../middleware/authMiddleware");
 
 
 
@@ -37,17 +38,21 @@ Router.post("/register", eah(async (req, res) => {
     console.log(name,email,password)
 
     if (!name || !email || !password) {
-        res.status(200)
+        res.status(200).json({ error: "Enter complete details" });
         throw new Error("All necessary input files have not been filled.")
     }
 
     const userExist = await UserModel.findOne({ email });
-    if (userExist)
+    if (userExist){
+        res.status(409).json({ error: "UserEmail exists" });
         throw new Error("User already exists")
+    }
 
     const usernameExist = await UserModel.findOne({ name });
-    if (usernameExist)
+    if (usernameExist){
+        res.status(408).json({ error: "Username exists" });
         throw new Error("Username already taken")
+    }
 
     const createdUser = await UserModel.create({ name, email, password })
 
@@ -69,3 +74,24 @@ Router.post("/register", eah(async (req, res) => {
 }))
 
 module.exports = Router;
+
+Router.get("/profile", authMiddleware ,eah(async(req,res) => {
+   try {
+    const userdata = req.user;
+    // console.log(userdata)
+    return res.status(200).json({msg: userdata})
+   } catch (error) {
+    console.log("Error from the user route")
+   }
+}))
+
+
+Router.get("/fetchUsers", authMiddleware ,eah(async(req,res) => {
+   try {
+    const userdata = req.user;
+    // console.log(userdata)
+    return res.status(200).json({userdata})
+   } catch (error) {
+    console.log("Error from the user route")
+   }
+}))

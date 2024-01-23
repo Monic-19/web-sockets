@@ -34,9 +34,8 @@ connectDB();
 app.listen(PORT, console.log(`server is running on ${PORT}`)
 )
 
-
 app.get("/", (req, res) => {
     res.send("Welcome to home page 2");
-})
+}) 
 
 app.use("/user", userRoutes)

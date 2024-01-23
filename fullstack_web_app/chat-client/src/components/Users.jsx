@@ -1,5 +1,5 @@
 import { IconButton } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -12,11 +12,17 @@ const Users = () => {
     const screenWidth = window.innerWidth;
 
     if (screenWidth < 600) {
-        animationVariants.initial.scale = 0.2;
+        animationVariants.initial.height = "0%";
+        animationVariants.animate.height = "100%";
       } else {
         animationVariants.initial.borderRadius = "60%";
         animationVariants.animate.borderRadius = "0%";
       }
+    
+
+    useEffect( () => {
+        console.log("users refershed")
+    } )
 
     return (
         <AnimatePresence>

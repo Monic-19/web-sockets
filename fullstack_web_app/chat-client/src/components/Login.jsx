@@ -2,13 +2,18 @@ import React, { useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import {ToastContainer, toast} from "react-toastify";
+import { useAuth } from '../stroe/auth';
 
 const Login = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
+    const {stortokenInLS} = useAuth();
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+
+    const [error, setError]  = useState(false);
 
     const formani = {
         initial: { rotate: "-40deg", opacity: 0 },
@@ -33,13 +38,15 @@ const Login = () => {
           });
       
           if (!response.ok) {
-            throw new Error('Login failed');
+            setError(true);
+            throw new Error('Login failed ');
           }
       
           const resData = await response.json();
-          console.log("res token ", resData.token);
-      
+          stortokenInLS(resData.token);
           localStorage.setItem("token", resData.token);
+        //   console.log("res token ", resData.token);
+      
           navigate("/app/welcome");
         } catch (error) {
           console.error(error.message);
@@ -51,7 +58,7 @@ const Login = () => {
     return (
 
         <AnimatePresence>
-            <motion.div ref={constraintsRef} className='h-[96vh] w-[92vw] lg:h-[92vh] lg:w-[95vw] flex flex-col lg:flex-row bg-[#F6FBFC] rounded-lg shadow-2xl'>
+            <motion.div ref={constraintsRef} className='h-[96vh] w-[92vw] lg:h-[92vh] lg:w-[95vw] flex flex-col lg:flex-row bg-[#F6FBFC] rounded-lg shadow-2xl overflow-hidden' >
 
                 <div
                     className='w-[100%] h-[30%] lg:w-[40%] lg:h-[100%] flex  items-center justify-center'>
@@ -66,7 +73,7 @@ const Login = () => {
 
                 <section className=' w-[100%] h-[70%] lg:w-[60%] lg:h-[100%] flex  items-center justify-center overflow-hidden'>
 
-                    <motion.div  {...entani} className="flex items-center justify-center  px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+                    <motion.div  {...entani} className="flex items-center justify-center  px-4 py-10 sm:px-6 sm:py-16 lg:px-8 z-10">
 
                         <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
 
@@ -80,9 +87,14 @@ const Login = () => {
                                 >
                                     Create free account.
                                 </a>
-                            </motion.p>
 
-                            <div className="space-y-5">
+                            </motion.p>
+                            {
+                                error &&
+                                <p className=' my-4 text-red-600'>Login <b>Failed</b>, check your credentials</p>
+                            }
+
+                            <div className="space-y-5 mt-2">
                                 <div>
                                     <label htmlFor="name" className="text-base font-medium text-gray-900">
                                         {' '}
@@ -132,7 +144,7 @@ const Login = () => {
                         </div>
                     </motion.div>
                 </section>
-
+                <ToastContainer></ToastContainer>
             </motion.div>
         </AnimatePresence>
 

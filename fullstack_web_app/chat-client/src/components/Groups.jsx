@@ -4,12 +4,27 @@ import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from "framer-motion"
 
 const Groups = () => {
+    const animationVariants = {
+        initial:{ opacity: 0, scale: 0 },
+        animate:{ opacity: 1, scale: 1 },
+        exit:{ opacity: 0, scale: 0},
+    }
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth < 600) {
+        animationVariants.initial.height = "0%";
+        animationVariants.animate.height = "100%";
+
+      } else {
+        animationVariants.initial.borderRadius = "60%";
+        animationVariants.animate.borderRadius = "0%";
+      }
     return (
         <AnimatePresence>
             <motion.div 
-                initial={{opacity:0, scale:0, borderRadius:"60%"}}
-                animate={{opacity:1, scale:1 , borderRadius:"0%"}} 
-                exit={{opacity:0, scale:0,  borderRadius:"60%"}} 
+                variants={animationVariants}
+                initial="initial"
+                animate="animate"
                 transition={{ease:"anticipate", duration: "0.3"}}
                 className='h-full w-[70%] bg-[#F3F3F4]'>
                 <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row  lg:m-[2%] lg:p-3 lg:mt-[12px] shadow-md'>

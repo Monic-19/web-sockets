@@ -4,17 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import EmailIcon from '@mui/icons-material/Email';
 import GoogleIcon from '@mui/icons-material/Google';
+import { useAuth } from '../stroe/auth';
 
 
 
 const Signup = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
-
+    const {stortokenInLS} = useAuth();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [error, setError]  = useState(false);
+    const [errorMsg , setErrorMsg] = useState("Could not register");
 
     const handleSignup = async () => {
         try {
@@ -26,17 +30,35 @@ const Signup = () => {
             body: JSON.stringify({ name, email, password }),
           });
       
-          if (!response.ok) {
-            throw new Error('Signup failed');
-          }
-      
+          
+          if (response.status == 200) {
+              setError(true);
+              setErrorMsg("Please enter complete details")
+              throw new Error('Signup failed');
+            }
+
+          if (response.status == 409) {
+              setError(true);
+              setErrorMsg("User Email already exists try again.")
+              throw new Error('Signup failed');
+            }
+          if (response.status == 408) {
+              setError(true);
+              setErrorMsg("Username already exists try again.")
+              throw new Error('Signup failed');
+            }
+                  
           const resData = await response.json();
-          console.log("RES_DATA: ", resData);
-      
-          localStorage.setItem("token", resData.token);
+          stortokenInLS(resData.token);
+        //   console.log("RES_DATA: ", resData.error);
+        //   localStorage.setItem("token", resData.token);
+
+          if(response.ok)
           navigate("/app/welcome");
+
         } catch (error) {
-          console.error(error.message);
+          console.error("Err : - ",error.message);
+          setError(true);
         }
       };
       
@@ -59,7 +81,7 @@ const Signup = () => {
     }
 
     return (
-        <motion.div ref={constraintsRef} className='h-[96vh] w-[92vw] lg:h-[92vh] lg:w-[95vw] flex flex-col lg:flex-row bg-[#F6FBFC] rounded-lg shadow-2xl'>
+        <motion.div ref={constraintsRef} className='h-[96vh] w-[92vw] lg:h-[92vh] lg:w-[95vw] flex flex-col lg:flex-row bg-[#F6FBFC] rounded-lg shadow-2xl overflow-hidden'>
 
             <div
                 className='w-[100%] h-[35%] lg:w-[40%] lg:h-[100%] flex  items-center justify-center'>
@@ -70,6 +92,7 @@ const Signup = () => {
                     className="cursor-grab rounded-lg bg-center bg-cover  h-[25vh] w-[25vh] lg:h-[50vh] lg:w-[50vh] bg-no-repeat bg-[url('/assets/logo.jpeg')] z-50"></motion.div>
 
             </div>
+
 
             <section className=' w-[100%] h-[65%] lg:w-[60%] lg:h-[100%] flex  items-center justify-center overflow-hidden'>
 
@@ -88,6 +111,12 @@ const Signup = () => {
                                 Login In
                             </a>
                         </motion.p>
+
+                            {
+                                error &&
+                                <p className=' my-4 text-red-600'><b>{errorMsg}</b></p>
+                            }
+
                         <div className="space-y-5">
                             <div>
                                 <label htmlFor="name" className="text-base font-medium text-gray-900">
