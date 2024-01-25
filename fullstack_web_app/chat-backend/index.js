@@ -18,6 +18,8 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 const MONGO_URL = process.env.MONGO_URL;
 const userRoutes = require("./Routes/userRoutes")
+const chatRoutes = require("./Routes/chatRoutes")
+const messageRoutes = require("./Routes/messageRoutes")
 
 
 const connectDB = async () => {
@@ -39,3 +41,7 @@ app.get("/", (req, res) => {
 }) 
 
 app.use("/user", userRoutes)
+
+app.use("/chat", chatRoutes);
+
+app.use("/message", messageRoutes);

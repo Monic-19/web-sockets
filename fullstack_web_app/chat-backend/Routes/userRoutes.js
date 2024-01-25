@@ -73,8 +73,6 @@ Router.post("/register", eah(async (req, res) => {
     }
 }))
 
-module.exports = Router;
-
 Router.get("/profile", authMiddleware ,eah(async(req,res) => {
    try {
     const userdata = req.user;
@@ -88,10 +86,26 @@ Router.get("/profile", authMiddleware ,eah(async(req,res) => {
 
 Router.get("/fetchUsers", authMiddleware ,eah(async(req,res) => {
    try {
-    const userdata = req.user;
-    // console.log(userdata)
-    return res.status(200).json({userdata})
+    const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const users = await UserModel.find(keyword).find({
+    _id: { $ne: req.user._id },
+  }).select({password : 0});
+  console.log(users)
+  res.send(users);
+
+    // return res.status(200).json({userdata})
+
    } catch (error) {
     console.log("Error from the user route")
    }
 }))
+
+module.exports = Router;

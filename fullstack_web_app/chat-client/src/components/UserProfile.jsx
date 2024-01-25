@@ -6,8 +6,9 @@ import { useAuth } from '../stroe/auth'
 const UserProfile = () => {
 
   const navigate = useNavigate();
-  const { logoutUser, token } = useAuth();
+  const { logoutUser } = useAuth();
   const [profileData, setProfileData] = useState(null);
+  const token = localStorage.getItem("token");
 
   const animationVariants = {
     initial: { opacity: 0, scale: 0 },
@@ -40,7 +41,7 @@ const UserProfile = () => {
         }
 
         const data = await response.json();
-        console.log("User data : ", data)
+        // console.log("User data : ", data)
         setProfileData(data);
 
       } catch (error) {

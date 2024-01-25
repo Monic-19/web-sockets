@@ -44,7 +44,7 @@ const Login = () => {
       
           const resData = await response.json();
           stortokenInLS(resData.token);
-          localStorage.setItem("token", resData.token);
+        //   localStorage.setItem("newtoken", resData.token);
         //   console.log("res token ", resData.token);
       
           navigate("/app/welcome");
