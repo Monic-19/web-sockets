@@ -11,28 +11,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
 
-    // const [conversations, setConversations] = useState([
-    //     {
-    //         name : "Monic",
-    //         lastMessage : "Subh uth jana",
-    //         timeStamp : "today",
-    //     },
-    //     {
-    //         name : "Bansal",
-    //         lastMessage : "BKL",
-    //         timeStamp : "today",
-    //     },
-    //     {
-    //         name : "Trauma",
-    //         lastMessage : "Gonna Cry Today",
-    //         timeStamp : "yesterday",
-    //     },
-    // ])
-
     const [conversations, setConversations] = useState([]);
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
-    // console.log(token)
+    console.log("all conversations -> ", conversations)
 
     useEffect(() => {
         const fetchConvo = async () => {
@@ -93,9 +75,12 @@ const Sidebar = () => {
 
             <div className={' bg-white h-[74vh] lg:h-[70vh] rounded-md mt-[10%] m-[6%] p-3 overflow-y-scroll scroll-smooth lg:mt-[4%] lg:m-[2%] shadow-xl'}>
                 <h3 className='m-[2%] text-md lg:text-lg ' >Chats..</h3>
-                {conversations.map((conversation) => (
-                    <ConversationBox key={conversation._id} conversation={conversation}></ConversationBox>
-                ))}
+
+                <div className=''>
+                    {conversations.map((conversation) => (
+                        <ConversationBox key={conversation._id} conversation={conversation}></ConversationBox>
+                    ))}
+                </div>
 
             </div>
 

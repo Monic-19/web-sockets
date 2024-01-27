@@ -11,3 +11,8 @@
     width: 1.15em !important;
     height: 1.15em !important;
 }
+
+::selection {
+  background-color: #4CAF50; 
+  color: #fff; 
+}

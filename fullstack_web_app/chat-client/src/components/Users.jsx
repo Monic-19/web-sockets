@@ -2,8 +2,10 @@ import { IconButton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from 'react-router-dom';
 
 const Users = () => {
+    const navigate = useNavigate();
     const animationVariants = {
         initial: { opacity: 0, scale: 0 },
         animate: { opacity: 1, scale: 1 },
@@ -23,7 +25,7 @@ const Users = () => {
     }
 
 
-    useEffect(() => {
+      useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:3000/user/fetchUsers', {
@@ -86,7 +88,7 @@ const Users = () => {
                 transition={{ ease: "anticipate", duration: "0.3" }}
                 className='h-full w-[70%] bg-[#F3F3F4]'>
 
-                <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row  lg:m-[2%] lg:p-3 lg:mt-[12px] shadow-md'>
+                <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row  lg:m-[2%] p-1 lg:p-3 lg:mt-[12px] shadow-md'>
 
                     <div className="left m-2 lg:m-0 h-[7vh] w-[7vh] lg:h-[5vh] lg:w-[5vh] bg-cover bg-no-repeat bg-[url('/assets/logo.jpeg')]">
                     </div>
@@ -96,7 +98,7 @@ const Users = () => {
                     </h1>
                 </div>
 
-                <div className='bg-white rounded-md mx-[6%] -mt-[2.3%] flex items-center flex-col p-1 lg:flex-row lg:p-2 lg:-mt-[0.3%] lg:m-[2%] shadow-md'>
+                <div className='bg-white rounded-md mx-[6%] -mt-[2.3%] flex items-center flex-col lg:flex-row p-2 lg:p-2 lg:-mt-[0.1%] lg:m-[2%] shadow-md'>
                     <IconButton>
                         <SearchIcon ></SearchIcon>
                     </IconButton>

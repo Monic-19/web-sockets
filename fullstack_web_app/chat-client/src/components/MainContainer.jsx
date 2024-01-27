@@ -1,9 +1,5 @@
 import React from 'react'
 import Sidebar from './Sidebar'
-import ChatPart from './ChatPart'
-import WelcomePage from './WelcomePage'
-import CreateGroups from './CreateGroups'
-import UserAndGroups from './Users'
 import { Outlet } from 'react-router-dom'
 
 const MainContainer = () => {

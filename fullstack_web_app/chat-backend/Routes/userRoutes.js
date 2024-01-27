@@ -15,7 +15,7 @@ Router.post("/login", eah(async (req, res) => {
 
     // console.log("\nfetched user data : ",user);
 
-    console.log(await user.matchPassword(password))
+    // console.log(await user.matchPassword(password))
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -35,7 +35,7 @@ Router.post("/login", eah(async (req, res) => {
 Router.post("/register", eah(async (req, res) => {
 
     const {name, email, password} = req.body;
-    console.log(name,email,password)
+    // console.log(name,email,password)
 
     if (!name || !email || !password) {
         res.status(200).json({ error: "Enter complete details" });
@@ -56,7 +56,7 @@ Router.post("/register", eah(async (req, res) => {
 
     const createdUser = await UserModel.create({ name, email, password })
 
-    console.log(createdUser._id)
+    // console.log(createdUser._id)
 
     if (createdUser) {
         res.status(201).json({
@@ -73,39 +73,40 @@ Router.post("/register", eah(async (req, res) => {
     }
 }))
 
-Router.get("/profile", authMiddleware ,eah(async(req,res) => {
-   try {
-    const userdata = req.user;
-    // console.log(userdata)
-    return res.status(200).json({msg: userdata})
-   } catch (error) {
-    console.log("Error from the user route")
-   }
-}))
+Router.get("/profile", authMiddleware, eah(async (req, res) => {
+    try {
+      const userdata = req.user;
+      // console.log(userdata)
+      return res.status(200).json({ msg: userdata });
+    } catch (error) {
+      console.error("Error from the user route:", error.message);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }));
+  
 
-
-Router.get("/fetchUsers", authMiddleware ,eah(async(req,res) => {
-   try {
-    const keyword = req.query.search
-    ? {
-        $or: [
-          { name: { $regex: req.query.search, $options: "i" } },
-          { email: { $regex: req.query.search, $options: "i" } },
-        ],
-      }
-    : {};
-
-  const users = await UserModel.find(keyword).find({
-    _id: { $ne: req.user._id },
-  }).select({password : 0});
-  console.log(users)
-  res.send(users);
-
-    // return res.status(200).json({userdata})
-
-   } catch (error) {
-    console.log("Error from the user route")
-   }
-}))
+  Router.get("/fetchUsers", authMiddleware, eah(async (req, res) => {
+    try {
+      const keyword = req.query.search
+        ? {
+            $or: [
+              { name: { $regex: req.query.search, $options: "i" } },
+              { email: { $regex: req.query.search, $options: "i" } },
+            ],
+          }
+        : {};
+  
+      const users = await UserModel.find(keyword).find({
+        _id: { $ne: req.user._id },
+      }).select({ password: 0 });
+  
+      // console.log(users);
+      res.status(200).json(users);
+    } catch (error) {
+      console.error("Error from the user route:", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }));
+  
 
 module.exports = Router;

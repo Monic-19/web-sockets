@@ -1,13 +1,19 @@
 import { IconButton } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from 'react-router-dom';
 
 const Groups = () => {
+
+    const [groups, setGroups] = useState([]);
+    const token = localStorage.getItem("token");
+    const navigate = useNavigate();
+
     const animationVariants = {
-        initial:{ opacity: 0, scale: 0 },
-        animate:{ opacity: 1, scale: 1 },
-        exit:{ opacity: 0, scale: 0},
+        initial: { opacity: 0, scale: 0 },
+        animate: { opacity: 1, scale: 1 },
+        exit: { opacity: 0, scale: 0 },
     }
     const screenWidth = window.innerWidth;
 
@@ -15,17 +21,72 @@ const Groups = () => {
         animationVariants.initial.height = "0%";
         animationVariants.animate.height = "100%";
 
-      } else {
+    } else {
         animationVariants.initial.borderRadius = "60%";
         animationVariants.animate.borderRadius = "0%";
-      }
+    }
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/chat/fetchGroup', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch groups');
+                }
+
+                const groupsData = await response.json();
+                // console.log(groupsData)
+                setGroups(groupsData);
+                
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+
+        fetchGroups();
+    }, []);
+
+    async function startChat(data) {
+        console.log("adding in group ", data.chatName);
+        let userId = data._id;
+        console.log(userId)
+        try {
+            const response = await fetch('http://localhost:3000/chat/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`, 
+              },
+              body: JSON.stringify({ userId }),
+            });
+        
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+        
+            const result = await response.json();
+            console.log("Chat created with ", data.chatName); 
+            
+          } catch (error) {
+            console.error(error.message);
+          }
+
+    }
+
+
     return (
         <AnimatePresence>
-            <motion.div 
+            <motion.div
                 variants={animationVariants}
                 initial="initial"
                 animate="animate"
-                transition={{ease:"anticipate", duration: "0.3"}}
+                transition={{ ease: "anticipate", duration: "0.3" }}
                 className='h-full w-[70%] bg-[#F3F3F4]'>
                 <div className='mt-[10px] flex m-[6%] bg-white  rounded-md flex-col items-center lg:flex-row  lg:m-[2%] lg:p-3 lg:mt-[12px] shadow-md'>
 
@@ -46,16 +107,25 @@ const Groups = () => {
 
                 <div className=' h-[74vh] lg:h-[70vh] rounded-md mt-[4%] m-[6%] p-3 overflow-y-scroll scroll-smooth lg:mt-[2%] lg:m-[2%] flex flex-col items-center '>
 
-                    <div className='user w-[90%] lg:w-[40%] h-[5vh] lg:h-[10vh] rounded-full bg-white p-4  flex  items-center justify-center lg:justify-normal cursor-pointer shadow-lg mb-[4vh]   hover:scale-105'>
+                    {groups.map(group => (
+                        <div
+                            key={group._id}
+                            onClick={() => startChat(group)}
+                            className='user w-[100%] lg:w-[45%] h-[5vh] lg:h-[8vh] rounded-full bg-white lg:p-2  flex justify-center lg:justify-normal items-center cursor-pointer shadow-lg mb-[1vh]   hover:scale-105'>
 
-                        <div className='hidden lg:flex h-[50px] w-[50px] bg-[#dadada] rounded-full m-2 items-center justify-center '>
-                            <h1 className='text-2xl '>N</h1>
-                        </div>
-                        <div>
-                            <h2 className=' font-bold lg:ml-4 text-[1.5vh] lg:text-[2.5vh] text-gray-500'>Test Group</h2>
+                            <div className='hidden lg:flex h-[50px] w-[50px] bg-[#dadada] rounded-full m-2 items-center justify-center '>
+                                <h1 className='text-2xl '>{group.chatName[0]}</h1>
+                            </div>
+                            <div className='flex justify-between items-center text-gray-500 gap-6 w-[80%]'>
+                                <h2 className=' font-bold lg:ml-4 text-[1.5vh] lg:text-[2.5vh] '>{group.chatName}</h2>
+                                <h5 className='lg:ml-4 text-[1.25vh] lg:text-[2vh] '>{group.users.length} members</h5>
+                            </div>
+
                         </div>
 
-                    </div>
+                    ))}
+
+
 
 
                 </div>

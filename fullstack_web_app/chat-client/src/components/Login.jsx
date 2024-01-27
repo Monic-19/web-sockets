@@ -8,7 +8,7 @@ import { useAuth } from '../stroe/auth';
 const Login = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
-    const {stortokenInLS} = useAuth();
+    const {stortokenInLS, storeUserInLS} = useAuth();
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -43,6 +43,8 @@ const Login = () => {
           }
       
           const resData = await response.json();
+        //   console.log(resData);
+          storeUserInLS(resData._id);
           stortokenInLS(resData.token);
         //   localStorage.setItem("newtoken", resData.token);
         //   console.log("res token ", resData.token);
