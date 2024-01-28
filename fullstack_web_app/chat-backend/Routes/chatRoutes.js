@@ -78,6 +78,55 @@ Router.post("/", authMiddleware, eah(async (req, res) => {
   }
 }));
 
+//access group
+// Router.post("/group", authMiddleware, eah(async (req, res) => {
+//   const { userId } = req.body;
+
+//   if (!userId) {
+//     console.log("UserId not sent with request");
+//     return res.status(400).send({ error: "UserId param not sent with request" });
+//   }
+
+//   let existingChat = await ChatModel.find({
+//     isGroupChat: true,
+//     $and: [
+//       { users: { $elemMatch: { $eq: req.user._id } } },
+//       { users: { $elemMatch: { $eq: userId } } },
+//     ]
+//   })
+//     .populate("users", "-password")
+//     .populate("latestMessage");
+
+//   existingChat = await UserModel.populate(existingChat, {
+//     path: "latestMessage.sender",
+//     select: "name email",
+//   });
+
+//   if (existingChat.length > 0) {
+//     return res.send(existingChat[0]);
+//   } else {
+//     const chatData = {
+//       chatName: `${req.user.name}'s Chat`,
+//       isGroupChat: true,
+//       users: [req.user._id, userId],
+//     };
+
+//     try {
+//       const createdChat = await ChatModel.create(chatData);
+
+//       const fullChat = await ChatModel.findOne({ _id: createdChat._id }).populate(
+//         "users",
+//         "-password"
+//       );
+
+//       return res.status(200).json(fullChat);
+//     } catch (error) {
+//       console.error("Error creating chat:", error);
+//       return res.status(500).send({ error: "Internal Server Error" });
+//     }
+//   }
+// }));
+
 
 Router.get("/fetchGroup", authMiddleware, eah(async (req, res) => {
   try {

@@ -41,7 +41,7 @@ const UserProfile = () => {
         }
 
         const data = await response.json();
-        console.log("User data : ", data)
+        // console.log("User data : ", data)
         setProfileData(data);
 
       } catch (error) {
@@ -66,23 +66,34 @@ const UserProfile = () => {
       animate="animate"
       variants={animationVariants}
       transition={{ ease: "anticipate", duration: "0.3" }}
-      className='h-full w-[70%] bg-[#F3F3F4]'>
+      className='h-full w-[70%] bg-[#F3F3F4] flex justify-center items-center'>
 
+{
+  profileData ? (
+    <div className="max-w-md mx-auto bg-gray-800 shadow-lg rounded-lg overflow-hidden h-[40vh] w-[60vw] lg:w-[30vw] flex flex-col justify-center gap-5 items-center">
 
-      <div>
-        <button onClick={bye}>Logout</button>
+      <div className="px-6 py-4">
+        <div className="font-bold text-3xl text-green-500 mb-5">
+          {`Hi, ${profileData.msg.name}!`}
+        </div>
+        <p className="text-gray-400 text-base">You are signed with <span className='text-white'>{profileData.msg.email}</span>.</p>
       </div>
 
-      {profileData ? (
-        <div>
-          <p>Name: {profileData.msg.name}</p>
-          <p>Email: {profileData.msg.email}</p>
-        </div>
-      ) : (
-        <p>Loading profile data...</p>
-      )}
-
-
+      <div className="px-6 py-4 flex justify-center items-center flex-col gap-5">
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full"
+          type="button"
+          onClick={bye}
+        >
+          Logout
+        </button>
+        <p className="text-white text-base">Please get back early :)</p>
+      </div>
+    </div>
+  ) : (
+    <p>Loading profile data...</p>
+  )
+}
     </motion.div>
   )
 }

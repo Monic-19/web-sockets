@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MessageOther from './MessageOther';
@@ -17,6 +17,7 @@ const ChatPart = () => {
   const [chatId, chatUser] = dyParams.id ? dyParams.id.split('&') : [null, null];
   const navigate = useNavigate();
   const containerRef = useRef(null);
+  const userId = localStorage.getItem("user");
 
   const animationVariants = {
     initial: { opacity: 0, scale: 0 },
@@ -56,7 +57,6 @@ const ChatPart = () => {
         }
 
         const data = await response.json();
-        // console.log(data)
         setAllMessages(data);
         scrollToBottom();
       } catch (error) {
@@ -87,10 +87,36 @@ const ChatPart = () => {
       const messageData = await response.json();
       // console.log('Message sent successfully:', messageData);
       setMessageContent("");
-    
+
 
     } catch (error) {
       console.error('Error sending message:', error.message);
+    }
+  };
+
+  const exitGroup = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/chat/exitGroup', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ chatId, userId }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+  
+      const removedGroup = await response.json();
+      // console.log('Group removed:', removedGroup);
+      navigate("/app/users")
+
+    } catch (error) {
+      console.error('Error exiting group:', error.message);
+   
     }
   };
 
@@ -103,28 +129,35 @@ const ChatPart = () => {
         transition={{ ease: "anticipate", duration: "0.3" }}
         className='h-full w-[70%]'>
 
-        <div className='msgTop w-full h-[7%]  lg:h-[10%] bg-white flex items-center '>
+        <div className='w-full h-[7%]  lg:h-[10%] bg-white flex items-center '>
 
-          <div className='h-[50px] w-[50px] bg-[#dadada] rounded-full ml-5 lg:mr-2  flex items-center justify-center '>
-            <h1 className='text-2xl '>{chatUser[0]}</h1>
+          <div className='w-[10%]'>
+            <div
+              className={`h-[35px] w-[35px] lg:h-[50px] lg:w-[50px] rounded-full ml-5 lg:mr-2 flex items-center justify-center bg-[#dadada] text-black`}
+            >
+              <h1 className='text-2xl'>{chatUser[0]}</h1>
+            </div>
           </div>
 
-          <div className='ml-3'>
+          <div className='w-[80%] lg:ml-0 ml-9'>
             <div>
               <h2 className=' font-bold text-[1.5vh] lg:text-[2.5vh] '>{chatUser}</h2>
+              <h1 className='text-gray-500 text-[1.25vh]  text- pb-1'>today</h1>
             </div>
 
-            <h1 className='text-gray-500 text-[1.25vh]  text-right pb-1'>today</h1>
+
           </div>
 
-          <div className='ml-[40%] lg:ml-[80%]'>
-            <IconButton><DeleteIcon></DeleteIcon></IconButton>
+          <div className='w-[10%] mr-5'>
+            {
+              <IconButton onClick={exitGroup}><DeleteForeverIcon></DeleteForeverIcon></IconButton>
+            }
           </div>
 
         </div>
 
         <div ref={containerRef} className=' w-full  h-[86%] bg-[#F3F3F4]  lg:h-[83%] overflow-y-scroll scroll-smooth'>
-        {allMessages
+          {allMessages
             .slice(0)
             // .reverse()
             .map((message, index) => {

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 
 const Users = () => {
+    const [search, setSearch] = useState("");
+
     const navigate = useNavigate();
     const animationVariants = {
         initial: { opacity: 0, scale: 0 },
@@ -14,7 +16,7 @@ const Users = () => {
     const screenWidth = window.innerWidth;
 
     const token = localStorage.getItem("token");
-    const [users, setUsers] = useState({});
+    const [users, setUsers] = useState([]);
 
     if (screenWidth < 600) {
         animationVariants.initial.height = "0%";
@@ -70,6 +72,8 @@ const Users = () => {
         
             const result = await response.json();
             console.log("Chat created with ", data.name); 
+            // console.log(result)
+            // navigate(`app/chat/${result._id}&${data.name}`)
             
           } catch (error) {
             console.error(error.message);
@@ -94,7 +98,7 @@ const Users = () => {
                     </div>
 
                     <h1 className="right pl-[2%] m-2 lg:m-0 font-bold text-gray-500">
-                        Online Users
+                        All Users
                     </h1>
                 </div>
 
@@ -102,23 +106,29 @@ const Users = () => {
                     <IconButton>
                         <SearchIcon ></SearchIcon>
                     </IconButton>
-                    <input className=' outline-0 border-none w-full text-sm p-1 lg:text-lg lg:ml-3 text-center lg:text-left' type="text" placeholder='search' />
+                    <input 
+                        className=' outline-0 border-none w-full text-sm p-1 lg:text-lg lg:ml-3 text-center lg:text-left' type="text" 
+                        placeholder='search'
+                        onChange={(e) => setSearch(e.target.value)}  />
                 </div>
 
                 <div className=' h-[74vh] lg:h-[70vh] rounded-md mt-[4%] m-[6%] p-3 overflow-y-scroll scroll-smooth lg:mt-[2%] lg:m-[2%] flex flex-col items-center'>
 
-                    {Object.entries(users).map(([userId, userData]) => (
-
-
-                        <div key={userId}
-                            onClick={() => startChat(userData)}
+                    {
+                    users.filter( (user) => {
+                        return search.toLowerCase() == "" 
+                                ? user : user.name.toLowerCase().includes(search)
+                    } )
+                    .map( (user) => (
+                        <div key={user._id}
+                            onClick={() => startChat(user)}
                             className='user w-[90%] lg:w-[40%] h-[5vh] lg:h-[8vh] rounded-full bg-white lg:p-2  flex justify-center lg:justify-normal items-center cursor-pointer shadow-lg mb-[1vh]   hover:scale-105'>
 
                             <div className='hidden lg:flex h-[40px] w-[40px] bg-[#dadada] rounded-full m-2 items-center justify-center '>
-                                <h1 className='text-2xl '>{userData.name[0]}</h1>
+                                <h1 className='text-2xl '>{user.name[0]}</h1>
                             </div>
                             <div>
-                                <h2 className=' font-bold lg:ml-4 text-[1.5vh] lg:text-[2.5vh] text-gray-500 '>{userData.name}</h2>
+                                <h2 className=' font-bold lg:ml-4 text-[1.5vh] lg:text-[2.5vh] text-gray-500 '>{user.name}</h2>
                             </div>
                         </div>
                     ))}
