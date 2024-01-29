@@ -7,6 +7,9 @@ import MessageSelf from './MessageSelf';
 import { AnimatePresence, motion } from "framer-motion"
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+const ENDPOINT = "http://localhost:3000"
+var socket;
 
 const ChatPart = () => {
 
@@ -41,7 +44,24 @@ const ChatPart = () => {
   };
 
   useEffect(() => {
-    // console.log("users refreshed")
+    socket = io(ENDPOINT);
+    socket.emit("setup", userId);
+    socket.on("connected", () => {
+      console.log("user is connected")
+    })
+    return () => {
+      socket.disconnect();
+    };
+  }, [])
+
+  useEffect(() => {
+    socket.on('messageRecieved', (newMessage) => {
+      setAllMessages([...allMessages, newMessage]);
+    });
+  }, [allMessages]);
+
+  useEffect(() => {
+
     const fetchMessages = async () => {
       try {
         const response = await fetch(`http://localhost:3000/message/${chatId}`, {
@@ -56,9 +76,12 @@ const ChatPart = () => {
           throw new Error('Failed to fetch messages');
         }
 
+        socket.emit('joinChat', chatId);
+
         const data = await response.json();
         setAllMessages(data);
-        scrollToBottom();
+        // scrollToBottom();
+
       } catch (error) {
         console.error('Error fetching messages:', error.message);
       }
@@ -66,7 +89,7 @@ const ChatPart = () => {
 
     fetchMessages();
 
-  }, [chatId]);
+  },[allMessages, chatId]);
 
 
   const handleSendMessage = async () => {
@@ -85,6 +108,7 @@ const ChatPart = () => {
       }
 
       const messageData = await response.json();
+      socket.emit("newMessage", messageData)
       // console.log('Message sent successfully:', messageData);
       setMessageContent("");
 
@@ -104,21 +128,22 @@ const ChatPart = () => {
         },
         body: JSON.stringify({ chatId, userId }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-  
+
       const removedGroup = await response.json();
       // console.log('Group removed:', removedGroup);
       navigate("/app/users")
 
     } catch (error) {
       console.error('Error exiting group:', error.message);
-   
+
     }
   };
+
 
   return (
     <AnimatePresence>
@@ -156,7 +181,7 @@ const ChatPart = () => {
 
         </div>
 
-        <div ref={containerRef} className=' w-full  h-[86%] bg-[#F3F3F4]  lg:h-[83%] overflow-y-scroll scroll-smooth'>
+        <div ref={containerRef} className=' w-full  h-[86%] bg-[#F3F3F4]  lg:h-[83%] overflow-y-scroll '>
           {allMessages
             .slice(0)
             // .reverse()
@@ -181,6 +206,7 @@ const ChatPart = () => {
             className="border-none outline-0 ml-4 w-[93%] text-sm lg:text-lg"
             type="text"
             placeholder="Type a message"
+            value={content}
           />
 
           <IconButton onClick={handleSendMessage}>

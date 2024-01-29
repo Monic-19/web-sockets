@@ -6,7 +6,7 @@ const MessageOther = ({props}) => {
   const [chatId, chatUser] = dyParams.id ? dyParams.id.split('&') : [null, null];
   
   return (
-    <div className=' w-[65vw] lg:w-[45vw] min-h-[7vh] mt-[2vh] flex items-center ml-2 lg:ml-0'>
+    <div className=' w-[65vw] lg:w-[45vw] min-h-[7vh] m-[2vh] flex items-center ml-2 lg:ml-0'>
         <div className='hidden lg:flex h-[50px] w-[50px] bg-[#dadada] rounded-full m-2 items-center justify-center '>
           <h1 className='text-2xl '>{props.sender.name[0]}</h1>
         </div>
