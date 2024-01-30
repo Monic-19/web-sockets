@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import { toast } from 'react-toastify';
 const ENDPOINT = "http://localhost:3000"
 var socket;
 
@@ -38,7 +39,7 @@ const ChatPart = () => {
   }
 
   const scrollToBottom = () => {
-    if (containerRef.current) {
+    if (containerRef.current){
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   };
@@ -47,7 +48,7 @@ const ChatPart = () => {
     socket = io(ENDPOINT);
     socket.emit("setup", userId);
     socket.on("connected", () => {
-      console.log("user is connected")
+      // console.log("user is connected")
     })
     return () => {
       socket.disconnect();
@@ -77,10 +78,8 @@ const ChatPart = () => {
         }
 
         socket.emit('joinChat', chatId);
-
         const data = await response.json();
         setAllMessages(data);
-        // scrollToBottom();
 
       } catch (error) {
         console.error('Error fetching messages:', error.message);
@@ -89,7 +88,8 @@ const ChatPart = () => {
 
     fetchMessages();
 
-  },[allMessages, chatId]);
+  },[allMessages, chatId ]);
+
 
 
   const handleSendMessage = async () => {
@@ -111,7 +111,7 @@ const ChatPart = () => {
       socket.emit("newMessage", messageData)
       // console.log('Message sent successfully:', messageData);
       setMessageContent("");
-
+      scrollToBottom();
 
     } catch (error) {
       console.error('Error sending message:', error.message);
@@ -136,6 +136,7 @@ const ChatPart = () => {
 
       const removedGroup = await response.json();
       // console.log('Group removed:', removedGroup);
+      toast.success("You left the group.")
       navigate("/app/users")
 
     } catch (error) {
@@ -181,7 +182,7 @@ const ChatPart = () => {
 
         </div>
 
-        <div ref={containerRef} className=' w-full  h-[86%] bg-[#F3F3F4]  lg:h-[83%] overflow-y-scroll '>
+        <div ref={containerRef} className=' w-full  h-[86%] bg-[#F3F3F4]  lg:h-[83%] overflow-y-scroll scroll-smooth '>
           {allMessages
             .slice(0)
             // .reverse()

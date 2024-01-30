@@ -10,6 +10,8 @@ import Groups from './components/Groups';
 import PageNotFound from './components/PageNotFound';
 import UserProfile from './components/UserProfile';
 import Signup from './components/Signup';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -32,6 +34,7 @@ function App() {
 
       </Routes>
 
+      <ToastContainer/>
     </div>
   )
 }

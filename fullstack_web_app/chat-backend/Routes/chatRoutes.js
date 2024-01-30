@@ -5,6 +5,7 @@ const eah = require('express-async-handler');
 
 const UserModel = require("../models/userSchema");
 const ChatModel = require("../models/chatSchema");
+const MessageModel = require("../models/messageSchema")
 const authMiddleware = require("../middleware/authMiddleware");
 
 //fetch chats
@@ -193,6 +194,29 @@ Router.put("/exitGroup", authMiddleware, eah(async (req, res) => {
     }
   } catch (error) {
     res.status(400).send({ error: error.message });
+  }
+}));
+
+Router.delete('/deleteChat', authMiddleware, eah(async (req, res) => {
+  const { chatId } = req.body;
+
+  if (!chatId) {
+    return res.status(400).json({ error: 'Missing chatId in request body' });
+  }
+
+  try {
+    const deletedChat = await ChatModel.findByIdAndDelete(chatId);
+
+    if (!deletedChat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+
+    await MessageModel.deleteMany({ chat: chatId });
+
+    return res.status(200).json({ message: 'Chat ans associate messages deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting chat:', error.message);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }));
 
