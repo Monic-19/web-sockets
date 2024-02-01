@@ -18,11 +18,13 @@ Router.post("/login", eah(async (req, res) => {
     // console.log(await user.matchPassword(password))
 
     if (user && (await user.matchPassword(password))) {
+  
         res.json({
             _id: user.id,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            lastLogin: user.lastLogin,
             token: generateToken(user._id),
         })
     }

@@ -145,6 +145,11 @@ const ChatPart = () => {
     }
   };
 
+  function handleKeyDown(event){
+    if(event.key == "Enter")
+    handleSendMessage(); 
+}
+
 
   return (
     <AnimatePresence>
@@ -208,6 +213,7 @@ const ChatPart = () => {
             type="text"
             placeholder="Type a message"
             value={content}
+            onKeyDown={handleKeyDown}
           />
 
           <IconButton onClick={handleSendMessage}>

@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, unique: true, required: true },
   email : {type : String , required : true},
   password: { type: String, required: true },
+  lastLogin : {type : Date, default : new Date()}
 },{timeStamp : true});
 
 userSchema.methods.matchPassword = async function(enteredPassword) {

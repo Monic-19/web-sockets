@@ -2,18 +2,18 @@ import React, { useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import {ToastContainer, toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from '../stroe/auth';
 
 const Login = () => {
     const constraintsRef = useRef(null);
     const navigate = useNavigate();
-    const {stortokenInLS, storeUserInLS} = useAuth();
+    const { stortokenInLS, storeUserInLS } = useAuth();
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
-    const [error, setError]  = useState(false);
+    const [error, setError] = useState(false);
 
     const formani = {
         initial: { rotate: "-40deg", opacity: 0 },
@@ -29,32 +29,37 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-          const response = await fetch('http://localhost:3000/user/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, password }),
-          });
-      
-          if (!response.ok) {
-            setError(true);
-            throw new Error('Login failed ');
-          }
-      
-          const resData = await response.json();
-        //   console.log(resData);
-          storeUserInLS(resData._id);
-          stortokenInLS(resData.token);
-        //   localStorage.setItem("newtoken", resData.token);
-        //   console.log("res token ", resData.token);
-      
-          navigate("/app/welcome");
+            const response = await fetch('http://localhost:3000/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, password }),
+            });
+
+            if (!response.ok) {
+                setError(true);
+                throw new Error('Login failed ');
+            }
+
+            const resData = await response.json();
+              console.log(resData);
+            storeUserInLS(resData._id);
+            stortokenInLS(resData.token);
+            //   localStorage.setItem("newtoken", resData.token);
+            //   console.log("res token ", resData.token);
+
+            navigate("/app/welcome");
         } catch (error) {
-          console.error(error.message);
+            console.error(error.message);
         }
-      };
-      
+    };
+
+    function handleKeyDown(event){
+        if(event.key == "Enter")
+            handleLogin(); 
+    }
+
 
 
     return (
@@ -129,6 +134,7 @@ const Login = () => {
                                             type="password"
                                             placeholder="Password"
                                             id="password"
+                                            onKeyDown={handleKeyDown}
                                         ></input>
                                     </div>
                                 </div>
