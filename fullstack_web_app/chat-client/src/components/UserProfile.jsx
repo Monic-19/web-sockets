@@ -9,6 +9,8 @@ const UserProfile = () => {
   const { logoutUser } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const token = localStorage.getItem("token");
+  let timestamp;
+  const [displayString, setDisplayString] = useState("");
 
   const animationVariants = {
     initial: { opacity: 0, scale: 0 },
@@ -42,6 +44,18 @@ const UserProfile = () => {
 
         const data = await response.json();
         // console.log("User data : ", data)
+        timestamp = data.msg.lastLogin;
+        const date = new Date(timestamp);
+
+        const months = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();        
+        setDisplayString(`Since ${month} ${year}`);
+
         setProfileData(data);
 
       } catch (error) {
@@ -76,6 +90,7 @@ const UserProfile = () => {
         <div className="font-bold text-3xl text-green-500 mb-5">
           {`Hi, ${profileData.msg.name}!`}
         </div>
+        <p className='text-white'>{displayString}</p>
         <p className="text-gray-400 text-base">You are signed with <span className='text-white'>{profileData.msg.email}</span>.</p>
       </div>
 

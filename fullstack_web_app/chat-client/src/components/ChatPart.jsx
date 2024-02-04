@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
@@ -9,8 +9,9 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { toast } from 'react-toastify';
+import CryptoJS from 'crypto-js';
 const ENDPOINT = "http://localhost:3000"
-var socket;
+let socket;
 
 const ChatPart = () => {
 
@@ -44,8 +45,8 @@ const ChatPart = () => {
     }
   };
 
+  socket = useMemo( () => io(ENDPOINT), []) ;
   useEffect(() => {
-    socket = io(ENDPOINT);
     socket.emit("setup", userId);
     socket.on("connected", () => {
       // console.log("user is connected")
@@ -58,6 +59,7 @@ const ChatPart = () => {
   useEffect(() => {
     socket.on('messageRecieved', (newMessage) => {
       setAllMessages([...allMessages, newMessage]);
+      scrollToBottom();
     });
   }, [allMessages]);
 
@@ -79,7 +81,14 @@ const ChatPart = () => {
 
         socket.emit('joinChat', chatId);
         const data = await response.json();
-        setAllMessages(data);
+
+        const decryptedMessages = data.map(message => {
+          const decryptedContent = CryptoJS.AES.decrypt(message.content, `2f9a5e1c8b3d7f6a9e2c5b8a1d4f7e0a3d1c8b5a9e3c7b1f6e0a2d9c4b7a1d`).toString(CryptoJS.enc.Utf8);
+          return { ...message, content: decryptedContent };
+        });
+      
+
+        setAllMessages(decryptedMessages);
 
       } catch (error) {
         console.error('Error fetching messages:', error.message);
@@ -107,11 +116,11 @@ const ChatPart = () => {
         throw new Error('Failed to send message');
       }
 
+      scrollToBottom();
       const messageData = await response.json();
       socket.emit("newMessage", messageData)
       // console.log('Message sent successfully:', messageData);
       setMessageContent("");
-      scrollToBottom();
 
     } catch (error) {
       console.error('Error sending message:', error.message);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion"
+import CryptoJS from 'crypto-js';
 
 const ConversationBox = ({ conversation }) => {
 
@@ -27,7 +28,6 @@ const ConversationBox = ({ conversation }) => {
             }
 
             const result = await response.json();
-            console.log(result)
             console.log('Chat deleted successfully:', result);
         } catch (error) {
             console.error('Error deleting chat:', error.message);
@@ -68,7 +68,8 @@ const ConversationBox = ({ conversation }) => {
         if (conversation.latestMessage) {
             const otherUser = conversation.users.find(user => user._id !== userId);
             sendit = otherUser;
-            latestMessage = conversation.latestMessage.content;
+            const decryptedContent = CryptoJS.AES.decrypt(conversation.latestMessage.content,`2f9a5e1c8b3d7f6a9e2c5b8a1d4f7e0a3d1c8b5a9e3c7b1f6e0a2d9c4b7a1d`).toString(CryptoJS.enc.Utf8);
+            latestMessage = decryptedContent;
         } else {
             const otherUser = conversation.users.find(user => user._id !== userId);
             sendit = otherUser;
@@ -96,7 +97,8 @@ const ConversationBox = ({ conversation }) => {
 
     // For group chats
     if (conversation.latestMessage) {
-        latestMessage = conversation.latestMessage.content;
+        const decryptedContent = CryptoJS.AES.decrypt(conversation.latestMessage.content,`2f9a5e1c8b3d7f6a9e2c5b8a1d4f7e0a3d1c8b5a9e3c7b1f6e0a2d9c4b7a1d`).toString(CryptoJS.enc.Utf8);
+        latestMessage = decryptedContent;
     }
 
     return (
